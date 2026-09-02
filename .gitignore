@@ -1,0 +1,19 @@
+# Compiled output
+out/
+build/
+bin/
+target/
+*.class
+
+# Java tooling
+*.jar
+*.war
+*.ear
+hs_err_pid*
+replay_pid*
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
