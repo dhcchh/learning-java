@@ -1,4 +1,4 @@
-package projects.sqlvalidator.rules;
+package sqlvalidator.rules;
 
 /*
 handle any case - select, SELECT, Select, SeLEcT etc
@@ -14,7 +14,7 @@ len — how many characters to compare
 ignoreCase — case-sensitive or not
  */
 
-import projects.sqlvalidator.SqlRule;
+import sqlvalidator.SqlRule;
 
 public class StartsWithSelectRule implements SqlRule {
     public String name() { return "STARTS_WITH_SELECT"; }

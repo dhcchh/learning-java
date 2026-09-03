@@ -1,6 +1,6 @@
-package projects.sqlvalidator.rules;
+package sqlvalidator.rules;
 
-import projects.sqlvalidator.SqlRule;
+import sqlvalidator.SqlRule;
 
 public class NotEmptyRule implements SqlRule {
     public String name() { return "NOT_EMPTY"; }

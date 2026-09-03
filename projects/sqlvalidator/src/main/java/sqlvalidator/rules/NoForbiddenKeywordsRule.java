@@ -1,10 +1,11 @@
-package projects.sqlvalidator.rules;
+package sqlvalidator.rules;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
-import projects.sqlvalidator.SqlRule;
-import projects.sqlvalidator.SqlTokenizer;
+import sqlvalidator.SqlRule;
+import sqlvalidator.SqlTokenizer;
 
 public class NoForbiddenKeywordsRule implements SqlRule {
     public String name() {
@@ -16,7 +17,9 @@ public class NoForbiddenKeywordsRule implements SqlRule {
     public boolean check(String sql) {
         List<String> tokens = SqlTokenizer.tokenize(sql);
         for (String token : tokens) {
-            if (FORBIDDEN.contains(token)) {
+            // Match case-insensitively: `drop` is as dangerous as `DROP`.
+            // Locale.ROOT keeps the upper-casing independent of the default locale.
+            if (FORBIDDEN.contains(token.toUpperCase(Locale.ROOT))) {
                 return false;
             }
         }

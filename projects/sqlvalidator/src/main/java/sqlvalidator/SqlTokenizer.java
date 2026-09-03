@@ -1,4 +1,4 @@
-package projects.sqlvalidator;
+package sqlvalidator;
 
 import java.util.Arrays;
 import java.util.List;

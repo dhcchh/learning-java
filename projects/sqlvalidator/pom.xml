@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Inherit versions/properties from the workspace root POM. -->
+    <parent>
+        <groupId>com.learningjava</groupId>
+        <artifactId>learning-java</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>sqlvalidator</artifactId>
+    <name>sqlvalidator</name>
+    <description>Rule-based validator for read-only SQL query strings.</description>
+
+    <!--
+      Standard Maven layout, resolved relative to this file:
+        src/main/java  - production code (package `sqlvalidator`)
+        src/test/java  - JUnit 5 tests, run by `mvn test`
+      Only the test dependency is declared; its version comes from the parent's
+      <dependencyManagement>.
+    -->
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Lets you run the demo with: mvn -q compile exec:java -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.6.3</version>
+                <configuration>
+                    <mainClass>sqlvalidator.Main</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

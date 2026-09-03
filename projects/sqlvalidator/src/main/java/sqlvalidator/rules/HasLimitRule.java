@@ -1,7 +1,7 @@
-package projects.sqlvalidator.rules;
+package sqlvalidator.rules;
 
-import projects.sqlvalidator.SqlRule;
-import projects.sqlvalidator.SqlTokenizer;
+import sqlvalidator.SqlRule;
+import sqlvalidator.SqlTokenizer;
 
 import java.util.List;
 
