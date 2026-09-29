@@ -22,7 +22,8 @@ projects/
 - `projects/sqlvalidator` — rule-based validator for read-only SQL strings
 - `projects/datacoalesce` — data coalesce project (empty)
 - `projects/big_query_approval_platform` — synthetic phone-activation data in
-  BigQuery (not a Maven module; see [Querying the BigQuery dataset](#querying-the-bigquery-dataset))
+  BigQuery (not a Maven module yet; see [Querying the BigQuery dataset](#querying-the-bigquery-dataset)),
+  and the planned [query approval workflow](#query-approval-workflow-planned)
 
 ## Requirements
 
@@ -74,3 +75,49 @@ bq --quiet query --use_legacy_sql=false --location=US --format=csv \
 - NULLs are written as empty cells and booleans as `true`/`false`
 
 Both `data/` and `output_data/` in this project are gitignored.
+
+## Query approval workflow (planned)
+
+Not built yet: this is the design for a Spring Boot backend in
+`projects/big_query_approval_platform`. Users request one of a fixed set of
+queries against the `phone_activation` dataset, a human reviewer approves or
+rejects each request, and approved requests are run on BigQuery.
+
+```text
+submit ──► PENDING ──reviewer: yes──► APPROVED ──run on BigQuery──► DEPLOYED  (rows + CSV path)
+                  │                                              └► FAILED    (error message)
+                  └──reviewer: no + reason──► REJECTED  (reason returned to requester)
+```
+
+### Endpoints
+
+| Endpoint | Purpose |
+|---|---|
+| `POST /requests` `{queryType, params, requestedBy}` | Check the input format (malformed input gets a `400` and never reaches a reviewer), store the request as `PENDING`, and return its id and the SQL it will run |
+| `GET /requests?status=PENDING` | The reviewer's queue |
+| `POST /requests/{id}/decision` `{approved, reason, reviewer}` | `approved: false` requires a `reason` and sets `REJECTED`; `approved: true` sets `APPROVED`, runs the query, then sets `DEPLOYED` or `FAILED` |
+| `GET /requests/{id}` | The requester checks the status, reject reason or result |
+
+### Query types
+
+Each type is a fixed SQL template over the star schema:
+
+| Type | Parameters | Returns |
+|---|---|---|
+| `ACTIVATION_STATUS` | `imei` | Whether the phone is activated, and if so the country and date |
+| `ACTIVATIONS_BY_COUNTRY` | `from`, `to` | Activation count per country in the date range |
+| `ACTIVATIONS_OVER_TIME` | `from`, `to` | Activation count per month |
+
+### Design rules
+
+- User input never becomes part of the SQL text. Templates are fixed and values
+  are passed as BigQuery query parameters (`WHERE imei = @imei`), so SQL
+  injection isn't possible.
+- Treat IMEI as a string: validate it as 15 digits but never parse it as a
+  number, because some IMEIs start with `0`.
+- A reviewer can't approve their own request.
+- Deploying saves the result as a CSV in `output_data/`, like the `bq` command above.
+- Requests are kept in memory at first, behind a store interface so a database
+  can replace it later.
+- The Java BigQuery client uses Application Default Credentials, which are
+  separate from the `bq` CLI's login: run `gcloud auth application-default login` once.
