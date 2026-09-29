@@ -17,3 +17,9 @@ replay_pid*
 
 # Logs
 *.log
+
+# BigQuery project data: the source tables live in BigQuery and query
+# results are written locally. Paths are scoped so they don't also match
+# Java package directories named `data`.
+projects/big_query_approval_platform/data/
+projects/big_query_approval_platform/output_data/
